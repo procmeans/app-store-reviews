@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Local Claude config & skill workspace (contains secrets / eval data)
+.claude/
+
+# Scraped datasets & generated reports (not published)
+data/
+output/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local env / secrets
+.env
+*.local

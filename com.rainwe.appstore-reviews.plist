@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 每天上午 10:00 增量抓取 App Store 评论。
+     启用:  cp 此文件到 ~/Library/LaunchAgents/ 后
+            launchctl load ~/Library/LaunchAgents/com.rainwe.appstore-reviews.plist
+     停用:  launchctl unload ~/Library/LaunchAgents/com.rainwe.appstore-reviews.plist
+     立即跑一次:  launchctl start com.rainwe.appstore-reviews
+     日志在项目 data/accumulate.log -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.rainwe.appstore-reviews</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/procmeans/Documents/rainweskills/app-store-scraper/accumulate.sh</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key><integer>10</integer>
+        <key>Minute</key><integer>0</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/Users/procmeans/Documents/rainweskills/app-store-scraper/data/accumulate.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/procmeans/Documents/rainweskills/app-store-scraper/data/accumulate.log</string>
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>
