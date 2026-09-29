@@ -46,7 +46,7 @@ def coverage_str(n, total):
     The denominator is star-rating count (a superset of text reviews), so we
     always label it as ratings, not reviews.
     """
-    if not total:
+    if not total or not n:
         return ""
     pct = 100 * n / total
     if pct >= 0.5:
@@ -239,6 +239,12 @@ def main():
         all_reviews.extend(fresh)
         cov = coverage_str(len(fresh), stats.get("total_ratings"))
         print(f"  [{country}] fetched {len(fresh)} reviews" + (f"  /  该区{cov}" if cov else ""))
+
+    if len(all_reviews) == existing_count and any(
+            (s or {}).get("total_ratings") for s in store_stats.values()):
+        print("  Warning: the RSS feed returned no reviews although the app has ratings. "
+              "Apple sometimes serves empty feeds; try scripts/fetch_appstore_web.py "
+              "(featured reviews from the public page) or fetch_serpapi.py.", file=sys.stderr)
 
     # newest first
     all_reviews.sort(key=lambda r: r["updated"], reverse=True)

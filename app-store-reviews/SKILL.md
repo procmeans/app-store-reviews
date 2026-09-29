@@ -85,6 +85,26 @@ cost before a deep pull — a full history can be hundreds of credits. The key i
 read from the `SERPAPI_KEY` env var (never hardcode it). Output matches the RSS
 schema, so `analyze_reviews.py` and `--merge` work the same way.
 
+## When the RSS feed comes back empty: public web page fallback
+
+From some networks Apple now answers the RSS URL with HTTP 200 and a `feed`
+that has no `entry` list, even for Facebook; `fetch_reviews.py` warns when that
+happens. `scripts/fetch_appstore_web.py` then reads the reviews the public
+apps.apple.com page server-renders (no key, no token). Each storefront features
+~10 reviews per view and the default / iPhone / Mac views differ, so the script
+reads all three across many storefronts (default: 12 English ones) and also
+records the official average + rating count per country:
+
+```bash
+python3 scripts/fetch_appstore_web.py --app-id <ID> --merge data/<app>_ios.json
+python3 scripts/fetch_appstore_web.py --app-id <ID> --country us,gb,jp --merge data/<app>_ios.json
+```
+
+This is shallow (tens of reviews per app, Apple's featured picks rather than
+the newest, no app version), so tell the user and lean on Google Play for
+volume and trend analysis. Do not try to lift API tokens out of the page's
+JavaScript to reach the private review API.
+
 ## Optional fallback: app-store-scraper library (currently broken)
 
 The `app-store-scraper` / token-scraping libraries also target deep history via
@@ -140,8 +160,10 @@ If the user asks "why are people unhappy", "common complaints", "版本回归",
 python3 scripts/analyze_reviews.py reviews.json --out report.md
 ```
 
-It prints (and optionally saves) a Markdown report with: overall average,
-rating distribution bars, a **per-version average-rating table** to spot
+It accepts several files (e.g. one app's iOS + Play masters, pooled) and
+prints (and optionally saves) a Markdown report with: overall average,
+rating distribution bars, a **monthly trend** (count / average / 1-2★ share),
+a **per-version average-rating table** to spot
 regressions (a version with enough reviews but a notably lower average usually
 means an update broke something), a **complaint-dimension tally** (keyword hit
 counts across 价格/广告/扣费/闪退/同步/客服/内容/学习机制 by default; pass
@@ -152,7 +174,18 @@ representative negative, positive, and feature-request reviews.
 
 Use the complaint-dimension tally as the **quantitative floor for frequencies** —
 don't eyeball how common a pain point is, and address every dimension (even the
-low ones). It exists because models reliably under-count or skip frequent
+low ones). Each dimension row also carries the average star rating of the
+reviews that hit it (lower = more damaging), its share in the last
+`--recent-days` (default 90; higher than the overall share = getting worse),
+and the up-votes those reviews collected. Below it: which complaints co-occur
+in one review, a praise tally over ≥4★ reviews (`praise` axes in the preset),
+English n-gram phrases from negative and positive reviews (phrases that are in
+no dimension point at pains the preset misses), near-duplicate review bodies,
+and for Play the developer reply rate. `--sample helpful` orders the sample
+buckets by up-votes instead of recency. Presets: `vocab-cn`, `game-en`
+(19 complaint + 8 praise axes), `game-ja`; combine with `--dims game-en,game-ja`.
+
+The dimension tally exists because models reliably under-count or skip frequent
 themes like "会员太贵" when left to pure语感.
 
 The report ends with a "高频吐槽与亮点(由助手归纳)" placeholder. Fill that
@@ -161,6 +194,21 @@ section in yourself: read the sample buckets and the version table, then write
 positive highlights. This synthesis is deliberately left to you rather than to
 keyword counting — judging what reviewers actually mean, especially in Chinese,
 is something you do better than a frequency script.
+
+## Competitor discovery and comparison matrix
+
+`scripts/discover_competitors.py` fans a keyword list across App Store
+countries (and Google Play with `--gplay`), keeps apps whose title/description
+contains a `--must` term, and ranks them by rating volume with the keywords and
+countries that surfaced each one. Use it before choosing a competitor set so
+big-in-one-market clones and new entrants are not missed; then hand-curate the
+list (the relevance filter is loose).
+
+`scripts/compare_apps.py alias=a_ios.json,a_gp.json alias2=... --dims game-en`
+runs the analyzer's metrics on every app and prints the overview table
+(sample vs official average, recent 3-month average, Play reply rate), the
+app × complaint-axis matrix with a "how many apps ≥10%" category-wide line, the
+praise matrix, and each app's top negative phrases.
 
 ## Competitor comparison
 
