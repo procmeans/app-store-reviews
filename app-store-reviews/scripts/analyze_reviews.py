@@ -76,8 +76,8 @@ PRESETS = {
                                      "refill", "timer to play"],
             "monetization/price": ["pay to", "paywall", "expensive", "price", "coins",
                                    "gems", "subscription", "unlock", "locked", "$", "purchase"],
-            "cosmetics/collection": ["skin", "theme", "collect", "character", "cute",
-                                     "unlock new", "album", "outfit"],
+            "cosmetics/collection": ["skin", "theme", "collection", "unlock new", "album",
+                                     "outfit", "decorat"],
             "leaderboard/social": ["leaderboard", "high score", "highscore", "compete",
                                    "friends", "ranking", "global", "multiplayer", "pvp"],
             "audio": ["sound", "music", "audio", "mute", "noise", "song"],
@@ -177,7 +177,7 @@ def ngrams(texts, n, top):
     once per review so one long rant can't dominate."""
     c = Counter()
     for t in texts:
-        words = re.findall(r"[a-z0-9][a-z0-9']*", t.lower())
+        words = re.findall(r"[a-z0-9][a-z0-9']*", t.lower().replace("\u2019", "'"))
         grams = set()
         for i in range(len(words) - n + 1):
             g = words[i:i + n]

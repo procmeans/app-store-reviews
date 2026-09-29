@@ -17,6 +17,7 @@ Usage:
   python fetch_appstore_web.py --app-id 6471572249 --country us,gb,ca,au,nz,ie --merge data/app_ios.json
 """
 import argparse
+import html
 import json
 import os
 import re
@@ -49,6 +50,7 @@ def page_reviews(app_id, country, view=""):
     if r.status_code != 200:
         print(f"  [{country}] HTTP {r.status_code}", file=sys.stderr)
         return [], ""
+    r.encoding = "utf-8"  # the page omits a charset header; requests would guess latin-1
     m = re.search(r'<script[^>]*id="serialized-server-data"[^>]*>(.*?)</script>', r.text, re.S)
     if not m:
         return [], ""
@@ -68,7 +70,8 @@ def page_reviews(app_id, country, view=""):
     walk(data)
     t = re.search(r"<title>(.*?)</title>", r.text, re.S)
     if t:
-        title = re.sub(r"\s+on the App Store.*$", "", t.group(1)).strip()
+        title = html.unescape(t.group(1))
+        title = re.sub(r"\s+(- Ratings (&|and) Reviews|on the App Store).*$", "", title).strip("\u200e\u200f ")
     rows = [{
         "review_id": rv["id"], "country": country, "author": rv.get("reviewerName", ""),
         "rating": str(rv.get("rating", "")), "title": rv.get("title", ""),
