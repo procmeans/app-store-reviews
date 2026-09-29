@@ -18,6 +18,64 @@ import json
 import sys
 from collections import Counter, defaultdict
 
+# Keyword presets. Each has the complaint dimensions (a recall floor, see main())
+# and the wish/suggestion signals used to pick feature-request candidates.
+# Keywords are matched lower-cased, so English entries must be lower-case.
+PRESETS = {
+    "vocab-cn": {
+        "dimensions": {
+            "价格/会员太贵": ["贵", "会员", "价格", "收费", "氪", "付费", "充钱", "充值",
+                           "订阅", "涨价", "割韭菜", "白嫖", "舍不得", "太黑", "圈钱"],
+            "广告": ["广告", "弹窗", "开屏", "摇一摇", "推广", "插屏", "跳转淘宝", "跳转"],
+            "自动扣费/退款": ["扣费", "乱扣", "自动续费", "退款", "退费", "诱导", "默认勾选", "偷偷扣"],
+            "闪退/卡顿/bug": ["闪退", "崩溃", "卡顿", "卡死", "白屏", "黑屏", "死机", "打不开",
+                           "加载不", "bug", "进不去", "登录不"],
+            "多端同步/数据丢失": ["同步", "多设备", "换手机", "电脑", "平板", "ipad", "网页版",
+                              "数据丢", "清空", "记录没", "进度没", "丢失"],
+            "客服/反馈": ["客服", "没人理", "不回复", "不回应", "投诉", "反馈无", "找不到客服"],
+            "内容质量": ["错误", "错别字", "释义", "例句", "发音不", "翻译不", "不准", "音标错", "质量差"],
+            "学习机制/强制": ["复习量", "任务", "强制", "归零", "能量", "限制", "断签", "逼着", "门槛"],
+        },
+        "requests": ["希望", "能不能", "建议", "要是能", "要是有", "最好能", "最好有",
+                     "加个", "加上", "出个", "想要", "为什么不", "为啥不", "求", "期待",
+                     "可以加", "增加", "添加", "改进", "什么时候", "盼", "希望能", "能加"],
+    },
+    "game-en": {
+        "dimensions": {
+            "ads: frequency/interruption": [" ad ", " ads", "ad break", "commercial",
+                                            "every game", "after every", "too many ad",
+                                            "mid game", "middle of"],
+            "ads: paid removal not honored": ["paid to remove", "paid for no ads", "remove ads",
+                                              "no ads", "ad free", "ad-free", "still get ads",
+                                              "still see ads", "still ads", "refund"],
+            "ads: forced/unskippable/redirect": ["can't skip", "cant skip", "unskippable",
+                                                 "no x", "no exit", "redirect", "sends you to",
+                                                 "app store", "play store", "30 second"],
+            "physics/fairness": ["physics", "unfair", "pushed out", "flew out", "fly out",
+                                 "bounce", "glitch", "overlap", "jumps", "launched",
+                                 "didn't merge", "didnt merge", "won't merge", "wont merge",
+                                 "rigged"],
+            "difficulty/luck": ["too hard", "impossible", "too easy", "luck", "rng",
+                                "same fruit", "keeps giving", "can't win", "cant win", "random"],
+            "repetitive/no progression": ["boring", "repetitive", "same thing", "nothing to do",
+                                          "no goal", "gets old", "no levels", "more levels",
+                                          "progress"],
+            "monetization/price": ["pay to", "paywall", "expensive", "price", "coins",
+                                   "gems", "subscription", "unlock", "locked", "$"],
+            "crash/lag/battery": ["crash", "freez", "lag", "slow", "battery", "overheat",
+                                  "won't load", "wont load", "black screen", "bug"],
+            "data loss/sync": ["lost my", "progress gone", "reset", "high score gone",
+                               "new phone", "sync", "cloud", "ipad"],
+            "controls/ux": ["control", "aiming", "drag", "tap", "accidentally", "misclick",
+                            "button", "undo", "preview", "next fruit"],
+        },
+        "requests": ["wish", "please add", "should add", "would be nice", "would love",
+                     "it would be", "i want", "need a", "needs a", "add a", "add an",
+                     "hope", "suggest", "if only", "could you", "can you", "why can't",
+                     "why cant", "option to", "feature"],
+    },
+}
+
 
 def load_reviews(path):
     with open(path, encoding="utf-8") as f:
@@ -49,6 +107,10 @@ def main():
     ap.add_argument("--neg", type=int, default=12, help="How many negative samples (rating<=2)")
     ap.add_argument("--pos", type=int, default=6, help="How many positive samples (rating>=4)")
     ap.add_argument("--out", help="Write Markdown to this file (also prints to stdout)")
+    ap.add_argument("--dims", default="vocab-cn", choices=sorted(PRESETS),
+                    help="Keyword preset for the complaint-dimension tally and request "
+                         "filter: vocab-cn (Chinese learning apps, default) or game-en "
+                         "(English casual-game reviews, App Store or Google Play)")
     args = ap.parse_args()
 
     meta, reviews = load_reviews(args.json_file)
@@ -93,11 +155,9 @@ def main():
     # feature-request candidates: reviews whose text signals a wish/suggestion.
     # This is a quantitative pre-filter — the qualitative grouping of WHAT users
     # want is left to the model reading these, since intent needs comprehension.
-    REQ_SIGNALS = ["希望", "能不能", "建议", "要是能", "要是有", "最好能", "最好有",
-                   "加个", "加上", "出个", "想要", "为什么不", "为啥不", "求", "期待",
-                   "可以加", "增加", "添加", "改进", "什么时候", "盼", "希望能", "能加"]
+    REQ_SIGNALS = PRESETS[args.dims]["requests"]
     def is_request(r):
-        t = (r.get("title", "") + " " + r.get("content", ""))
+        t = (r.get("title", "") + " " + r.get("content", "")).lower()
         return any(s in t for s in REQ_SIGNALS)
     requests_ = [r for r in reviews if is_request(r)]
 
@@ -106,22 +166,11 @@ def main():
     # several dimensions (overlap is fine — this is a recall aid, not a
     # mutually-exclusive classification). The model still does the semantic
     # grouping; these counts just keep it honest about what's actually frequent.
-    DIMENSIONS = {
-        "价格/会员太贵": ["贵", "会员", "价格", "收费", "氪", "付费", "充钱", "充值",
-                       "订阅", "涨价", "割韭菜", "白嫖", "舍不得", "太黑", "圈钱"],
-        "广告": ["广告", "弹窗", "开屏", "摇一摇", "推广", "插屏", "跳转淘宝", "跳转"],
-        "自动扣费/退款": ["扣费", "乱扣", "自动续费", "退款", "退费", "诱导", "默认勾选", "偷偷扣"],
-        "闪退/卡顿/bug": ["闪退", "崩溃", "卡顿", "卡死", "白屏", "黑屏", "死机", "打不开",
-                       "加载不", "bug", "进不去", "登录不"],
-        "多端同步/数据丢失": ["同步", "多设备", "换手机", "电脑", "平板", "ipad", "网页版",
-                          "数据丢", "清空", "记录没", "进度没", "丢失"],
-        "客服/反馈": ["客服", "没人理", "不回复", "不回应", "投诉", "反馈无", "找不到客服"],
-        "内容质量": ["错误", "错别字", "释义", "例句", "发音不", "翻译不", "不准", "音标错", "质量差"],
-        "学习机制/强制": ["复习量", "任务", "强制", "归零", "能量", "限制", "断签", "逼着", "门槛"],
-    }
+    DIMENSIONS = PRESETS[args.dims]["dimensions"]
     dim_counts = {}
     for name, kws in DIMENSIONS.items():
-        hit = [r for r in reviews if any(k in (r.get("title", "") + r.get("content", "")) for k in kws)]
+        hit = [r for r in reviews
+               if any(k in (r.get("title", "") + " " + r.get("content", "")).lower() for k in kws)]
         neg_hit = [r for r in hit if to_int(r.get("rating")) <= 2]
         dim_counts[name] = (len(hit), len(neg_hit))
 

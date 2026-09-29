@@ -108,6 +108,22 @@ After fetching with the library, save to CSV/JSON in the same shape the user
 asked for (reuse the field names from the RSS output where possible:
 `rating, title, content, author, app_version, updated`).
 
+## Google Play
+
+For Android apps (or a cross-store comparison), use `scripts/fetch_gplay.py`
+(`pip3 install google-play-scraper`). It takes `--package com.x.y` or
+`--app-name`, `--country`, `--lang` (default `en`), `--count` (no 500 cap; it
+pages back through history), `--merge`, and writes the same row schema as the
+RSS script plus `store: "gplay"` and `dev_reply`. Play reviews have no title.
+
+```bash
+python3 scripts/fetch_gplay.py --package <com.x.y> --country us --count 2000 --format both --out app_gp
+```
+
+When comparing stores, keep one JSON per app per store and report them side by
+side: Android-only complaints (low-end lag, forced Play Store redirects from
+ads) are a signal of their own.
+
 ## Output shape
 
 CSV/JSON columns from the RSS path:
@@ -128,7 +144,10 @@ It prints (and optionally saves) a Markdown report with: overall average,
 rating distribution bars, a **per-version average-rating table** to spot
 regressions (a version with enough reviews but a notably lower average usually
 means an update broke something), a **complaint-dimension tally** (keyword hit
-counts across 价格/广告/扣费/闪退/同步/客服/内容/学习机制), and buckets of
+counts across 价格/广告/扣费/闪退/同步/客服/内容/学习机制 by default; pass
+`--dims game-en` for English casual-game reviews: ads frequency / paid removal
+not honored / forced ads, physics fairness, difficulty-luck, progression,
+monetization, crash-lag, data loss, controls), and buckets of
 representative negative, positive, and feature-request reviews.
 
 Use the complaint-dimension tally as the **quantitative floor for frequencies** —
