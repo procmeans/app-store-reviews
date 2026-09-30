@@ -8,7 +8,10 @@ research run must search the industry sites of **every core language**
 
 How to search: `site:<domain> <local mechanic name | game name | publisher>`
 with the industry words below. If the web tool can't fetch a site directly,
-site-restricted web search still works. Reachability was checked 2026-09;
+site-restricted web search still works. Exception: gamesindustry.biz,
+gamekult.com, lesechos.fr and numerama.com refuse the search tool's crawler —
+putting them in `allowed_domains` makes the whole search fail, so query them
+without the domain filter (e.g. `gamesindustry.biz <topic>`) or skip and log it. Reachability was checked 2026-09;
 "(search only)" means the site did not load from the sandbox.
 
 ## English (global industry — check at least 20 of these every run)

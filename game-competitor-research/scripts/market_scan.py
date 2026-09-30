@@ -222,7 +222,9 @@ def scan_gp(keywords, locales, match, max_details=60):
     # Details only for game results, ranked by how many searches surfaced them.
     games = {p: g for p, g in found.items()
              if not g.get("genre") or g["genre"] in GP_GAME_GENRES}
-    cand = sorted(games, key=lambda p: -len(games[p]["sources"]))[:max_details]
+    # Title keyword matches first (noisy multilingual keywords otherwise fill the cap).
+    cand = sorted(games, key=lambda p: (not match(games[p].get("title") or ""),
+                                        -len(games[p]["sources"])))[:max_details]
 
     def do_detail(pid):
         try:
