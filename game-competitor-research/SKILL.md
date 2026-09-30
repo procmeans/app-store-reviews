@@ -14,7 +14,7 @@ description: >-
 
 # Game competitor research
 
-One agent, three scripts, one report. Do **not** fan out into parallel research
+One agent, four scripts, one report. Do **not** fan out into parallel research
 subagents or a multi-stage deep-research pipeline — the scripts pull hard data
 in minutes; your job is to read it, check relevance, and judge.
 
@@ -26,13 +26,17 @@ Write all intermediate files under `data/<slug>/` in the working directory.
 
 ## Workflow
 
+Core languages for everything (store search, listings, reviews, web research):
+**en, tr, vi, ja, ko, fr, de, es** (+ zh). Turkish and Vietnamese are not
+optional — they are where many of these games and clones are made.
+
 ### 1. Keywords in many languages (2 min)
 
-From the game name / mechanic, write 6–12 short search phrases: English
-synonyms (what store listings would say: "rotate rings", "untie rings",
-"ring puzzle", "unlock circle") **plus** translations a local store would use
-in ja, ko, zh-CN, zh-TW, and optionally de/fr/es/pt/ru. Keep them 1–3 words.
-Too-generic words ("puzzle", "ring" alone) flood the results — avoid.
+From the game name / mechanic, write short search phrases: English synonyms
+(what store listings would say: "rotate rings", "untie rings", "unlock
+circle") **plus** a first-guess translation in each core language. Keep them
+1–3 words. Too-generic words ("puzzle", "ring" alone) flood the results.
+After step 2b, replace your guesses with the words the stores actually use.
 
 ### 2. Market scan (≈2–3 min)
 
@@ -57,6 +61,21 @@ Then **you** must:
   answers to "who invented this". Confirm the mechanic from `desc`.
 - Chart ranks are a snapshot. If the user says an app hit #1, trust that and
   say history needs Sensor Tower / AppMagic.
+
+### 2b. Localized listings + multilingual gameplay research (≈10 min)
+
+For each leader (and each notable big-publisher attempt):
+
+```bash
+python3 scripts/localized_listings.py --ios-id <id> --gp-id <package> --out data/<slug>/<app>_listings
+```
+
+This gives the store title/summary/description in en/tr/vi/ja/ko/fr/de/es/zh:
+the local name of the mechanic, positioning per market, advertised mechanics.
+Then follow `references/multilingual.md`: re-run `market_scan.py` with the
+local terms to catch local clones, and do web searches **in every core
+language** (guides, walkthrough videos, local reviews, dev/industry posts —
+Turkish and Vietnamese studio posts especially). Record findings per language.
 
 ### 3. Reviews of the top 3–5, every language (≈10 s per app)
 

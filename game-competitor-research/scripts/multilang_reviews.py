@@ -31,7 +31,7 @@ COUNTRY_LANG = {"jp": "ja", "kr": "ko", "tw": "zh", "hk": "zh", "cn": "zh", "de"
                 "fr": "fr", "it": "it", "es": "es", "nl": "nl", "se": "sv", "br": "pt",
                 "mx": "es", "ru": "ru", "tr": "tr", "sa": "ar", "th": "th", "vn": "vi",
                 "id": "id", "pl": "pl"}
-DEFAULT_GP_LANGS = "en:us,ja:jp,ko:kr,zh-TW:tw,de:de,fr:fr,pt:br,es:mx,ru:ru,it:it,tr:tr"
+DEFAULT_GP_LANGS = "en:us,tr:tr,vi:vn,ja:jp,ko:kr,fr:fr,de:de,es:mx,zh-TW:tw,pt:br,ru:ru,it:it"
 
 
 def get_json(url):

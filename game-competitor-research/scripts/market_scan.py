@@ -38,12 +38,13 @@ DEV_SEARCH_URL = ("https://itunes.apple.com/search?term={t}&country=us&entity=so
 LOOKUP_URL = "https://itunes.apple.com/lookup?id={ids}&country={c}"
 
 # Default rating-count countries: big English markets + JP/KR/CN-TW/EU/LatAm.
-DEFAULT_RATING_COUNTRIES = "us,gb,ca,au,jp,kr,tw,hk,de,fr,it,es,br,mx,ru,tr,in"
+DEFAULT_RATING_COUNTRIES = "us,gb,ca,au,jp,kr,tw,hk,de,fr,it,es,br,mx,ru,tr,vn,in"
 # Keyword search countries (each has its own store index & language).
-DEFAULT_SEARCH_COUNTRIES = "us,jp,kr,tw,cn,de,fr,br,ru"
+DEFAULT_SEARCH_COUNTRIES = "us,tr,vn,jp,kr,fr,de,mx,tw,cn,br"
 # Google Play (lang, country) pairs for search.
-# de:de and fr:fr currently break google-play-scraper search; use en/de-at style fallbacks if needed.
-DEFAULT_GP_LOCALES = "en:us,ja:jp,ko:kr,zh-TW:tw,pt:br,es:mx,ru:ru,en:gb"
+# EU storefronts (fr:fr, de:de, es:es) break google-play-scraper search, so
+# French/German use Canada/Switzerland.
+DEFAULT_GP_LOCALES = "en:us,tr:tr,vi:vn,ja:jp,ko:kr,fr:ca,de:ch,es:mx,zh-TW:tw,pt:br"
 
 # Hyper/hybrid-casual publishers worth sweeping. Search terms match Apple's
 # developer (artist) name; `match` must appear in the returned artistName.
@@ -314,7 +315,7 @@ def main():
     ap.add_argument("--keywords", required=True,
                     help="Comma-separated keywords, ideally in several languages")
     ap.add_argument("--search-countries", default=DEFAULT_SEARCH_COUNTRIES)
-    ap.add_argument("--chart-countries", default="us,jp,gb,de,kr")
+    ap.add_argument("--chart-countries", default="us,jp,kr,gb,de,fr,tr,vn")
     ap.add_argument("--genres", default="6014,7012",
                     help="Apple genre ids for charts (6014 Games, 7012 Puzzle, 7003 Casual, 7001 Action...)")
     ap.add_argument("--rating-countries", default=DEFAULT_RATING_COUNTRIES)
