@@ -82,7 +82,7 @@ Turkish and Vietnamese studio posts especially). Record findings per language.
 Open `references/industry-sites.md` and, for **each** core language, run
 site-restricted searches on that language's industry sites
 (`site:<domain> <local mechanic name | game | publisher> <industry word>`),
-at least 2 sites per language plus the English core set. Look for: market
+at least 2 sites per language, and **at least 20 English sites**. Look for: market
 size and chart stories, studio/publisher news, funding and layoffs, soft
 launches, kills, postmortems, genre analyses. Keep a running log of
 language × site × query × hit/no-hit — it becomes the report's 检索覆盖表.

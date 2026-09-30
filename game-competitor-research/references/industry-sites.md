@@ -11,7 +11,7 @@ with the industry words below. If the web tool can't fetch a site directly,
 site-restricted web search still works. Reachability was checked 2026-09;
 "(search only)" means the site did not load from the sandbox.
 
-## English (global industry — always check these)
+## English (global industry — check at least 20 of these every run)
 | Site | What it's good for |
 |---|---|
 | mobilegamer.biz | Mobile industry news, top-download/grossing roundups, publisher moves |
@@ -25,6 +25,25 @@ site-restricted web search still works. Reachability was checked 2026-09;
 | sensortower.com/blog | Market reports, top charts analysis |
 | gameanalytics.com/blog | Benchmarks (retention, session length) by genre |
 | liftoff.ai/blog (search only) | Casual gaming CPI/ROAS reports |
+| gameworldobserver.com | Mobile/F2P market news, chart & revenue stories, CIS/Turkey studios |
+| gamedaily.biz | Industry news and executive interviews |
+| thegamebusiness.com | Business newsletter/analysis (Christopher Dring) |
+| gamefile.news | Industry reporting (Stephen Totilo) |
+| venturebeat.com/games (search only) | GamesBeat: funding, studio and publisher news |
+| businessofapps.com | Revenue/usage statistics per game and publisher |
+| gamerefinery.com | Genre taxonomy, feature and meta analysis (Liftoff) |
+| appsflyer.com/blog | UA/retention/ad-spend benchmarks by genre |
+| adjust.com/blog (search only) | Mobile gaming benchmarks and trend reports |
+| applovin.com/blog | Ad monetization, hybrid-casual growth |
+| unity.com/blog | Unity Ads/LevelPlay gaming reports |
+| appfigures.com/resources (search only) | Top earners/downloads estimates |
+| mobilefreetoplay.com | F2P design and monetization deep dives |
+| gamemakers.com | Interviews/podcast with mobile game leaders |
+| mobilegamedoctor.com | Mobile design & monetization analysis |
+| konvoy.vc | Gaming investment newsletter and market reports |
+| newsletter.gamediscover.co | Discovery/market data (mostly PC, useful on trends) |
+| homagames.com/blog | Hybrid-casual publisher insights, test methodology |
+| kwalee.com/blog | Hyper/hybrid-casual publisher insights |
 
 Words: market, revenue, downloads, soft launch, killed, postmortem, hybrid-casual, publisher.
 

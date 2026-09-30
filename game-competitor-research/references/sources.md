@@ -13,7 +13,7 @@ Query patterns (swap in the publisher and mechanic):
 Sites: see `industry-sites.md` (per-language industry press — English,
 Turkish, Vietnamese, Japanese, Korean, French, German, Spanish, Chinese).
 
-Publisher newsrooms: rollic.gs, voodoo.io/blog, supersonic.com/learn/blog,
+Publisher newsrooms: rollic.gs, voodoo.io, supersonic.com,
 saygames.io, crazylabs.com/blog, homagames.com/blog, kwalee.com/blog.
 
 ## Rank history, revenue, downloads (usually paywalled)
