@@ -40,6 +40,19 @@ python3 app-store-reviews/scripts/fetch_serpapi.py --app-id <ID> --country us
 
 Edit the `APPS` list in `accumulate.sh` (format: `alias app_id country_list`), then run it on a schedule with launchd (see `com.rainwe.appstore-reviews.plist`) or cron.
 
+## Game competitor research skill
+
+`game-competitor-research/` builds on the scraper for mobile-game category research: chart snapshot (US/JP/GB/DE/KR), multilingual keyword search on iOS + Google Play, per-country rating sizes, a big-publisher sweep (Rollic, Voodoo, Lion Studios, ...), and multilingual reviews from both stores. See its `SKILL.md`.
+
+```bash
+pip3 install requests google-play-scraper
+python3 game-competitor-research/scripts/market_scan.py --keywords "rotate rings,untie rings,リング 回転" --out data/scan
+python3 game-competitor-research/scripts/multilang_reviews.py --ios-id 6793924927 --gp-id com.nebula.rotaterings --out data/rr
+python3 app-store-reviews/scripts/analyze_reviews.py data/rr.json --profile game
+```
+
+Both skills are linked under `.claude/skills/`, so Claude Code (local or on the web) loads them automatically when this repo is the working directory.
+
 ## Notes
 
 - The RSS feed is Apple's official endpoint; it returns at most ~10 pages / ~500 most-recent reviews per country.

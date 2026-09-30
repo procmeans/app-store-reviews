@@ -48,6 +48,8 @@ def coverage_str(n, total):
     """
     if not total:
         return ""
+    if not n:
+        return f"总评分数 {total:,}（该区未抓到文字评论）"
     pct = 100 * n / total
     if pct >= 0.5:
         frac = f"约占 {pct:.2f}%"

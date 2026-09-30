@@ -1,8 +1,10 @@
 # macOS
 .DS_Store
 
-# Local Claude config & skill workspace (contains secrets / eval data)
-.claude/
+# Local Claude config & skill workspace (contains secrets / eval data).
+# Only .claude/skills/ is committed so cloud sessions load the skills.
+.claude/*
+!.claude/skills/
 
 # Scraped datasets & generated reports (not published)
 data/

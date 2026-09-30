@@ -15,8 +15,46 @@ Usage:
 """
 import argparse
 import json
+import re
 import sys
 from collections import Counter, defaultdict
+
+
+# Multilingual keyword floor for mobile games (en/ja/ko/zh/de/fr/es/pt/ru/it/tr).
+# Matching is lowercase substring; CJK keywords are matched as-is.
+GAME_DIMENSIONS = {
+    "广告过多/强制广告": ["ads", "advert", "commercial", "広告", "광고", "广告", "廣告", "werbung",
+                   "publicité", "pub ", "anuncio", "propaganda", "реклам", "reklam", "pubblicità"],
+    "假广告/素材不符": ["fake ad", "misleading", "not like the ad", "not the game", "詐欺", "偽", "가짜",
+                  "虚假", "假广告", "irreführend", "trompeur", "engañoso", "enganos", "обман"],
+    "难度/卡关/道具绑架": ["too hard", "impossible", "unsolvable", "can't solve", "stuck", "booster",
+                    "hammer", "難しすぎ", "クリアできない", "어려", "못 깨", "太难", "卡关", "過不了",
+                    "zu schwer", "trop dur", "imposible", "difícil", "impossível", "сложн"],
+    "关卡重复/内容少": ["repeat", "same level", "recycled", "boring", "run out of levels", "no more levels",
+                   "同じ", "繰り返し", "飽き", "반복", "똑같", "重复", "無聊", "无聊", "wiederhol",
+                   "langweilig", "répét", "repetit", "повтор"],
+    "付费/价格/去广告": ["remove ads", "no ads", "pay", "price", "expensive", "subscription", "vip", "refund",
+                    "課金", "高い", "결제", "비싸", "付费", "收费", "太贵", "kaufen", "teuer", "payer",
+                    "pagar", "caro", "плат", "дорог"],
+    "Bug/闪退/卡顿": ["crash", "freez", "bug", "glitch", "lag", "won't load", "black screen", "落ちる",
+                   "バグ", "フリーズ", "버그", "튕", "闪退", "卡顿", "当机", "absturz", "plante",
+                   "se cierra", "trava", "вылет", "зависа"],
+    "操作/可视性(太小/难点)": ["too small", "tiny", "hard to see", "eyes", "zoom", "touch", "control",
+                        "小さ", "見にく", "操作", "작아", "안 보", "太小", "看不清", "klein", "petit",
+                        "pequeñ", "мелк"],
+    "进度丢失/存档": ["lost progress", "progress lost", "start over", "reset", "データが消", "진행", "进度",
+                  "存档", "fortschritt", "progression perdue", "progreso", "прогресс"],
+    "正面:解压/上瘾/动脑": ["relax", "addict", "satisf", "fun", "brain", "楽し", "ハマ", "脳トレ", "재밌",
+                      "중독", "好玩", "上瘾", "解压", "spaß", "süchtig", "addictif", "adictivo",
+                      "viciante", "затягива"],
+}
+
+
+def kw_hit(kw, text):
+    """Latin keywords match at a word start (so 'ads' != 'downloads'); CJK etc. as substring."""
+    if kw.isascii():
+        return re.search(r"(?<![a-z])" + re.escape(kw.strip()), text) is not None
+    return kw in text
 
 
 def load_reviews(path):
@@ -49,6 +87,9 @@ def main():
     ap.add_argument("--neg", type=int, default=12, help="How many negative samples (rating<=2)")
     ap.add_argument("--pos", type=int, default=6, help="How many positive samples (rating>=4)")
     ap.add_argument("--out", help="Write Markdown to this file (also prints to stdout)")
+    ap.add_argument("--profile", choices=["app", "game"], default="app",
+                    help="Complaint dimensions: 'app' (Chinese app/edu keywords, default) or "
+                         "'game' (multilingual mobile-game keywords)")
     args = ap.parse_args()
 
     meta, reviews = load_reviews(args.json_file)
@@ -119,9 +160,12 @@ def main():
         "内容质量": ["错误", "错别字", "释义", "例句", "发音不", "翻译不", "不准", "音标错", "质量差"],
         "学习机制/强制": ["复习量", "任务", "强制", "归零", "能量", "限制", "断签", "逼着", "门槛"],
     }
+    if args.profile == "game":
+        DIMENSIONS = GAME_DIMENSIONS
     dim_counts = {}
     for name, kws in DIMENSIONS.items():
-        hit = [r for r in reviews if any(k in (r.get("title", "") + r.get("content", "")) for k in kws)]
+        hit = [r for r in reviews if any(kw_hit(k, (r.get("title", "") + " " + r.get("content", "")).lower())
+                                         for k in kws)]
         neg_hit = [r for r in hit if to_int(r.get("rating")) <= 2]
         dim_counts[name] = (len(hit), len(neg_hit))
 
@@ -133,6 +177,13 @@ def main():
     lines.append("")
     lines.append(f"- 抓取文字评论数:**{len(reviews)}**　样本平均评分:**{avg:.2f}** / 5")
     lines.append(f"- 国家/地区:" + ", ".join(f"{c} ({n})" for c, n in by_country.most_common()))
+    langs = defaultdict(list)
+    for r in reviews:
+        if r.get("lang") or r.get("store"):
+            langs[f"{r.get('store', 'ios')}:{r.get('lang', '?')}"].append(to_int(r.get("rating")))
+    if langs:
+        lines.append("- 商店/语言:" + ", ".join(
+            f"{k} {len(v)} 条 均分 {sum(v)/len(v):.2f}" for k, v in sorted(langs.items(), key=lambda x: -len(x[1]))))
 
     # coverage vs official store ratings, if fetch_reviews saved store_stats
     stats = meta.get("store_stats") or {}
