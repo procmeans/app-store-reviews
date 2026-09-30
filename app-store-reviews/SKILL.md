@@ -124,6 +124,10 @@ If the user asks "why are people unhappy", "common complaints", "版本回归",
 python3 scripts/analyze_reviews.py reviews.json --out report.md
 ```
 
+For games, add `--profile game`: the complaint dimensions switch to multilingual
+game keywords (ads, fake ads, difficulty/boosters, repetition, pricing, bugs,
+readability, lost progress, plus a positive dimension) in en/ja/ko/zh/de/fr/es/pt/ru.
+
 It prints (and optionally saves) a Markdown report with: overall average,
 rating distribution bars, a **per-version average-rating table** to spot
 regressions (a version with enough reviews but a notably lower average usually
