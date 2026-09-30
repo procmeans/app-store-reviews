@@ -77,6 +77,17 @@ local terms to catch local clones, and do web searches **in every core
 language** (guides, walkthrough videos, local reviews, dev/industry posts —
 Turkish and Vietnamese studio posts especially). Record findings per language.
 
+### 2c. Industry sites in every language (≈10 min, mandatory)
+
+Open `references/industry-sites.md` and, for **each** core language, run
+site-restricted searches on that language's industry sites
+(`site:<domain> <local mechanic name | game | publisher> <industry word>`),
+at least 2 sites per language plus the English core set. Look for: market
+size and chart stories, studio/publisher news, funding and layoffs, soft
+launches, kills, postmortems, genre analyses. Keep a running log of
+language × site × query × hit/no-hit — it becomes the report's 检索覆盖表.
+Never drop a language silently; "checked, nothing found" is a valid row.
+
 ### 3. Reviews of the top 3–5, every language (≈10 s per app)
 
 ```bash
@@ -99,8 +110,10 @@ App Store. Classify each:
 - **Faded / failed**: small rating count, or no update for 6+ months.
 - **Killed**: not in the stores any more — only findable on the web.
 
-Then do a handful of web searches (see `references/sources.md` for query
-patterns and sites) to find killed soft-launch tests, publisher statements,
+Then do web searches (query patterns in `references/sources.md`; sites in
+`references/industry-sites.md` — search the publisher's home-language press
+too: Turkish for Rollic/Good Job/Grand Games, French for Voodoo/Homa,
+Vietnamese for iKame/ABI) to find killed soft-launch tests, publisher statements,
 and deconstructions. For each big-publisher attempt write what they changed
 versus the base mechanic (3D, color sort, "Jam" layer, meta, live ops) and why
 it likely worked or failed. Label these as inference unless sourced.

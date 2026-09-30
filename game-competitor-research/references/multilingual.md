@@ -34,7 +34,9 @@ local clones that English search misses.
 Combine `<local mechanic name>` or `<game name>` with these words. Run at
 least 2 searches per language; open the best 1–3 results.
 
-| Lang | Gameplay / guide | Review / impressions | Dev / industry | Good sites |
+Industry analysis sites per language are in `industry-sites.md` (separate, mandatory step). The sites below are for gameplay/guides/player reviews.
+
+| Lang | Gameplay / guide | Review / impressions | Dev / industry | Gameplay & community sites |
 |---|---|---|---|---|
 | en | how to play, walkthrough, level | review, gameplay | deconstruction, soft launch, prototype, CPI test | deconstructoroffun.com, mobilegamer.biz, pocketgamer.biz, reddit r/iosgaming r/AndroidGaming, YouTube |
 | tr | nasıl oynanır, bölüm, çözüm | inceleme, oyun yorumu | hyper casual, hibrit casual, oyun geliştirme, prototip, test, yayıncı | webrazzi.com, egirisim.com, oyunhaber, LinkedIn/Medium posts by Turkish studios |

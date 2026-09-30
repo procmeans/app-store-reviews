@@ -10,10 +10,8 @@ Query patterns (swap in the publisher and mechanic):
 - `<mechanic> hybrid casual deconstruction`
 - Chinese: `<玩法> 超休闲 测试 失败`、`<发行商> 新品 测试`、`<玩法> 爆款 拆解`
 
-Sites that cover publisher tests and kills:
-mobilegamer.biz, pocketgamer.biz, deconstructoroffun.com, gamerefinery.com,
-appmagic.rocks/research, sensortower.com/blog, naavik.co, gamelook.com.cn,
-youxiputao.com, 白鲸出海 (baijingapp.com), DataEye blog, 腾讯新闻 游戏频道.
+Sites: see `industry-sites.md` (per-language industry press — English,
+Turkish, Vietnamese, Japanese, Korean, French, German, Spanish, Chinese).
 
 Publisher newsrooms: rollic.gs, voodoo.io/blog, supersonic.com/learn/blog,
 saygames.io, crazylabs.com/blog, homagames.com/blog, kwalee.com/blog.
